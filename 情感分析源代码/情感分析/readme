@@ -1,0 +1,36 @@
+##############################################################################
+基于情感字典的情感判断模型
+
+1.程序以DictClassifier()类为结构，定义了 __init__ ，
+__get_phrase_dict，__get_dict，
+__is_clause_pattern*，__is_word_**，
+__divide_sentence_into_clauses，__split_sentence，
+__emotional_word_analysis，
+__analyse_word，__analyse_clause，analyse_sentence
+classify 等函数。【从小到大的顺序排列】
+
+2.大致的运行步骤
+先定义一个DictClassifier()的对象为a,初始化a的时候会调用__init__函数，此时会把f_dict下的所有字典加载进来，并使字典成为全局变量；
+入口函数（分类函数）为 classify(),其接受的参数是一条评论内容（表格中的一条评论）；
+classify()会调用analyse_sentence(),（为了屏蔽底层实现细节）；
+analyse_sentence()会调用__divide_sentence_into_clauses()将评论进行断句（分句），因为每条评论不一定仅含有一个主题，需要根据标点符号断句；然后对每分句进行情感分析，
+__analyse_clause()是对每一句话进行分析，该评论所有句子的情感值的和为该条评论的大致情感值。
+
+__analyse_clause()会根据该句的句式结构模式进行一些匹配（正则模糊匹配）分类（__is_clause_pattern1，__is_clause_pattern2...），看是否有“如果...就好了”之类的判断句，
+若符合某种模式，就按照该模式分析下去，若均不匹配，则采用通用短语分析，
+ 接着，逐个对句子的分词进行分析，首先会对每个词进行__analyse_word()词性分析，得到该词是属于连词\标点符号\情感字典，
+ 然后，计算该句话对应的词的情感值和，得到该句话的情感值【准确率会受情感字典的覆盖率而影响】
+ 最后，计算连词、标点符号的情感值并计入该句情感总和中，得到该断句情感值。
+
+ 对每个断句的情感值相加，会得到该条评论的情感值，若大于1，积极，若在【-1,1】之间是中性，若小于-1，则消极。
+
+ 3.需要的库jieba 分词用
+ pandas操作表格用
+
+
+
+
+
+
+
+
